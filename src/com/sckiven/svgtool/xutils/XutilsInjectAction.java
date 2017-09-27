@@ -2,15 +2,10 @@ package com.sckiven.svgtool.xutils;
 
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.generation.actions.BaseGenerateAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.SourceTreeToPsiMap;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.sckiven.svgtool.common.android.Definitions;
 import com.sckiven.svgtool.common.android.Utils;
@@ -19,8 +14,6 @@ import com.sckiven.svgtool.xutils.form.EntryList;
 import com.sckiven.svgtool.xutils.form.iface.ICancelListener;
 import com.sckiven.svgtool.xutils.form.iface.IConfirmListener;
 import com.sckiven.svgtool.xutils.info.IXUtils;
-import kotlin.reflect.jvm.internal.impl.descriptors.annotations.KotlinTarget;
-import kotlin.reflect.jvm.internal.impl.load.kotlin.KotlinClassFinder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -39,73 +32,10 @@ public class XutilsInjectAction extends BaseGenerateAction implements IConfirmLi
     }
 
     @Override
-    protected boolean isValidForFile(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-//        return super.isValidForFile(project, editor, file);
-        /*if (!(file instanceof PsiJavaFile) {
-            return false;
-        } else if (file instanceof PsiCompiledElement) {
-            return false;
-        } else {
-            PsiClass targetClass = this.getTargetClass(editor, file);
-            return targetClass != null && this.isValidForClass(targetClass);
-        }*/
-        /*if (!(file instanceof PsiJavaFile || file.getName().endsWith(".kt"))) {
-            return false;
-        } else if (file instanceof PsiCompiledElement) {
-            return false;
-        } else {
-            String cn = file.getClass().getName();
-            int offset = editor.getCaretModel().getOffset();
-            PsiElement element = file.findElementAt(offset);
-            if (element == null) {
-                KotlinTarget
-                return false;
-            } else {
-                PsiClass target = PsiTreeUtil.getParentOfType(element, PsiClass.class);
-                if (target instanceof SyntheticElement) {
-                    return false;
-                }
-            }
-
-
-
-            PsiClass targetClass = this.getTargetClass(editor, file);
-            if (targetClass == null || !isValidForClass(targetClass)) {
-                return false;
-            }
-        }
-
-        IXUtils butterKnife = XUtilsFactory.findXUtilsForPsiElement(project, file);
-
-        return (butterKnife != null && super.isValidForFile(project, editor, file) && Utils.getLayoutFileFromCaret(editor, file) != null);*/
-
-        return true;
-    }
-
-    /*@Override
-    public void actionPerformed(AnActionEvent e) {
-        Project project = e.getProject();
-        Editor editor = e.getData(PlatformDataKeys.EDITOR);
-        actionPerformedImpl(project, editor);
-//        super.actionPerformed(e);
-    }*/
-
-    /*@Override
-    public void update(AnActionEvent e) {
-//        super.update(e);
-        //Get required data keys
-        final Project project = e.getData(CommonDataKeys.PROJECT);
-        final Editor editor = e.getData(CommonDataKeys.EDITOR);
-        //Set visibility only in case of existing project and editor and if some text in the editor is selected
-        e.getPresentation().setVisible((project != null && editor != null
-                && editor.getSelectionModel().hasSelection()));
-    }*/
-
-    @Override
     public void actionPerformedImpl(@NotNull Project project, Editor editor) {
 //        super.actionPerformedImpl(project, editor);
         PsiFile file = PsiUtilBase.getPsiFileInEditor(editor, project);
-        PsiFile layout = Utils.getLayoutFileFromCaret(project, editor, file);
+        PsiFile layout = Utils.getLayoutFileFromCaret(editor, file);
 
         if (layout == null) {
             Utils.showErrorNotification(project, "No layout found");
@@ -129,7 +59,6 @@ public class XutilsInjectAction extends BaseGenerateAction implements IConfirmLi
             return;
         }
         PsiClass clazz = getTargetClass(editor, file);
-        KotlinClassFinder
 
         final IXUtils xutils = XUtilsFactory.findXUtilsForPsiElement(project, file);
         if (clazz == null || xutils == null) {
